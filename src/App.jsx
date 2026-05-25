@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useState, useEffect } from "react";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');`;
 
@@ -259,7 +259,6 @@ const ANALYZE_TYPES = [
 ];
 
 function fmt(n) { return n?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-function fmtK(n) { return n >= 1000 ? `$${(n/1000).toFixed(1)}K` : `$${fmt(n)}`; }
 
 export default function App() {
   const [page, setPage] = useState("portfolio");
