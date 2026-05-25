@@ -268,10 +268,20 @@ export default function App() {
   const [aiOutput, setAiOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const [holdings, setHoldings] = useState(HOLDINGS);
+  const [holdings, setHoldings] = useState(() => {
+    try {
+      const saved = localStorage.getItem("ledger_holdings");
+      return saved ? JSON.parse(saved) : HOLDINGS;
+    } catch { return HOLDINGS; }
+  });
   const [newHolding, setNewHolding] = useState({ ticker: "", name: "", type: "stock", shares: "", avgCost: "", price: "", divYield: "" });
   const [toast, setToast] = useState("");
   const [extraCtx, setExtraCtx] = useState("");
+
+  // Save holdings to localStorage whenever they change
+  useEffect(() => {
+    try { localStorage.setItem("ledger_holdings", JSON.stringify(holdings)); } catch {}
+  }, [holdings]);
 
   const totalValue = holdings.reduce((s, h) => s + h.shares * h.price, 0);
   const totalCost = holdings.reduce((s, h) => s + h.shares * h.avgCost, 0);
@@ -422,6 +432,7 @@ export default function App() {
                       <th>Mkt Value</th>
                       <th>Gain/Loss</th>
                       <th>Yield</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -439,6 +450,7 @@ export default function App() {
                           <td className="mono">${fmt(mv)}</td>
                           <td className={`mono ${gl >= 0 ? "up" : "down"}`}>{gl >= 0 ? "+" : ""}${fmt(gl)} ({glPct}%)</td>
                           <td className="mono" style={{ color: "var(--gold)" }}>{h.divYield}%</td>
+                          <td><button className="btn btn-ghost btn-sm" style={{ color: "var(--red)", borderColor: "transparent", padding: "4px 8px" }} onClick={e => { e.stopPropagation(); setHoldings(prev => prev.filter(x => x.ticker !== h.ticker)); showToast("Position removed"); }}>✕</button></td>
                         </tr>
                       );
                     })}
